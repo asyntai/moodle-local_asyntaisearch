@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_asyntaisearch';
-$plugin->version = 2026090900;
+$plugin->version = 2026091100;
 // Moodle 4.2: the first release with the core_external namespace this
 // plugin's web service functions are written against.
 $plugin->requires = 2023042400;
