@@ -1,0 +1,201 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_asyntaisearch/manage
+
+    The plugin's settings page.
+
+    Context variables required for this template:
+    * isconnected - whether the site is connected to Asyntai
+    * formurl - where the forms post to
+    * sesskey - the session key
+
+    Example context (json):
+    {
+        "isconnected": true,
+        "formurl": "/local/asyntaisearch/manage.php",
+        "sesskey": "abc",
+        "statedot": "on",
+        "stateheading": "Live on your site",
+        "statedetail": "Searching your courses and pages.",
+        "syncdetail": "12 items read from your ticked courses.",
+        "allowance": "",
+        "connectedas": "Connected as admin@example.com",
+        "dashboardurl": "https://asyntai.com/dashboard",
+        "analyticsurl": "https://asyntai.com/ai-search-analytics/",
+        "previewurl": "https://asyntai.com/ai-search-bar/preview/",
+        "hint": "",
+        "placements": [{"value": "navbar", "label": "In the top navigation bar", "desc": "", "checked": true}],
+        "selector": "",
+        "placeholder": "",
+        "accent": "",
+        "showguests": false,
+        "syncenabled": true,
+        "hascourses": true,
+        "courses": [{"id": 2, "fullname": "Fire Safety", "shortname": "FS", "categoryname": "", "hidden": false, "checked": true}],
+        "types": [{"type": "page", "label": "Page", "checked": true}]
+    }
+}}
+<style>
+.asyntai-wrap{max-width:820px}
+.asyntai-panel{background:#fff;border:1px solid #dee2e6;padding:20px 22px;margin:0 0 16px}
+.asyntai-panel h3{margin:0 0 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6b6b6b}
+.asyntai-hero h3{font-size:20px;font-weight:700;text-transform:none;letter-spacing:-.02em;color:#111}
+.asyntai-hero p{color:#555;font-size:14px;max-width:94ch}
+.asyntai-fine{color:#757575;font-size:12px;margin-bottom:0}
+.asyntai-points{display:flex;gap:1px;background:#dee2e6;border:1px solid #dee2e6;flex-wrap:wrap;margin:0 0 16px}
+.asyntai-point{background:#fff;padding:16px 18px;flex:1 1 200px;color:#555;font-size:13px}
+.asyntai-state{margin:0 0 6px;font-size:15px;font-weight:600;color:#111}
+.asyntai-dot{display:inline-block;width:8px;height:8px;margin-right:9px;vertical-align:middle}
+.asyntai-dot.on{background:#1a7f37}.asyntai-dot.busy{background:#bf8700}.asyntai-dot.off{background:#8a8a8a}
+.asyntai-detail{margin:0 0 4px;color:#555;max-width:68ch}
+.asyntai-links{margin:10px 0 0;display:flex;gap:20px;flex-wrap:wrap}
+.asyntai-links a{color:#555}.asyntai-danger{color:#b32d2e}
+.asyntai-hint{background:#fafafa}
+.asyntai-option{margin:0 0 10px}
+.asyntai-option small{display:block;color:#6b6b6b;margin-left:1.5rem}
+.asyntai-courses{max-height:280px;overflow:auto;border:1px solid #dee2e6;padding:10px}
+</style>
+
+<div class="asyntai-wrap">
+<div id="asyntai-alert" class="alert" style="display:none;" role="status"></div>
+
+{{^isconnected}}
+<div class="asyntai-panel asyntai-hero">
+    <h3>{{#str}} connectheading, local_asyntaisearch {{/str}}</h3>
+    <p>{{#str}} connectintro, local_asyntaisearch {{/str}}</p>
+    <p><button type="button" id="asyntai-connect" class="btn btn-primary">{{#str}} connectbutton, local_asyntaisearch {{/str}}</button></p>
+    <p class="asyntai-fine">{{#str}} connectfineprint, local_asyntaisearch {{/str}}</p>
+</div>
+<div class="asyntai-points">
+    <div class="asyntai-point">{{#str}} point1, local_asyntaisearch {{/str}}</div>
+    <div class="asyntai-point">{{#str}} point2, local_asyntaisearch {{/str}}</div>
+    <div class="asyntai-point">{{#str}} point3, local_asyntaisearch {{/str}}</div>
+</div>
+{{/isconnected}}
+
+{{#isconnected}}
+<div class="asyntai-panel">
+    <p class="asyntai-state"><span class="asyntai-dot {{statedot}}"></span>{{stateheading}}</p>
+    <p class="asyntai-detail">{{statedetail}}</p>
+    {{#syncdetail}}<p class="asyntai-detail">{{.}}</p>{{/syncdetail}}
+    {{#allowance}}<p class="asyntai-detail">{{.}}</p>{{/allowance}}
+    {{#connectedas}}<p class="asyntai-detail">{{.}}</p>{{/connectedas}}
+    <p class="asyntai-links">
+        <a href="{{dashboardurl}}" target="_blank" rel="noopener">{{#str}} linkdashboard, local_asyntaisearch {{/str}}</a>
+        {{#analyticsurl}}<a href="{{.}}" target="_blank" rel="noopener">{{#str}} linkanalytics, local_asyntaisearch {{/str}}</a>{{/analyticsurl}}
+        <a href="#" id="asyntai-disconnect" class="asyntai-danger">{{#str}} linkdisconnect, local_asyntaisearch {{/str}}</a>
+    </p>
+</div>
+
+{{#hint}}
+<div class="asyntai-panel asyntai-hint"><p class="asyntai-detail">{{.}}</p></div>
+{{/hint}}
+
+{{#previewurl}}
+<div class="asyntai-panel">
+    <h3>{{#str}} previewheading, local_asyntaisearch {{/str}}</h3>
+    <p class="asyntai-detail">{{#str}} previewintro, local_asyntaisearch {{/str}}</p>
+    <p><a class="btn btn-secondary" href="{{.}}" target="_blank" rel="noopener">{{#str}} previewbutton, local_asyntaisearch {{/str}}</a></p>
+</div>
+{{/previewurl}}
+
+<form method="post" action="{{formurl}}" class="asyntai-panel">
+    <input type="hidden" name="sesskey" value="{{sesskey}}">
+    <input type="hidden" name="saveplacement" value="1">
+    <h3>{{#str}} placementtitle, local_asyntaisearch {{/str}}</h3>
+    {{#placements}}
+    <div class="form-check asyntai-option">
+        <input class="form-check-input" type="radio" name="placement" id="asyntai-placement-{{value}}" value="{{value}}" {{#checked}}checked{{/checked}}>
+        <label class="form-check-label" for="asyntai-placement-{{value}}">{{label}}</label>
+        <small>{{desc}}</small>
+    </div>
+    {{/placements}}
+
+    <div class="form-group" style="margin-top:14px;">
+        <label for="asyntai-selector">{{#str}} selector, local_asyntaisearch {{/str}}</label>
+        <input type="text" class="form-control" id="asyntai-selector" name="selector" value="{{selector}}" maxlength="200">
+        <small class="form-text text-muted">{{#str}} selectordesc, local_asyntaisearch {{/str}}</small>
+    </div>
+
+    <div class="form-check asyntai-option">
+        <input class="form-check-input" type="checkbox" id="asyntai-showguests" name="showguests" value="1" {{#showguests}}checked{{/showguests}}>
+        <label class="form-check-label" for="asyntai-showguests">{{#str}} showguests, local_asyntaisearch {{/str}}</label>
+        <small>{{#str}} showguestsdesc, local_asyntaisearch {{/str}}</small>
+    </div>
+
+    <div class="form-group">
+        <label for="asyntai-placeholder">{{#str}} placeholder, local_asyntaisearch {{/str}}</label>
+        <input type="text" class="form-control" id="asyntai-placeholder" name="placeholder" value="{{placeholder}}" maxlength="120">
+        <small class="form-text text-muted">{{#str}} placeholderdesc, local_asyntaisearch {{/str}}</small>
+    </div>
+
+    <div class="form-group">
+        <label for="asyntai-accent">{{#str}} accent, local_asyntaisearch {{/str}}</label>
+        <input type="text" class="form-control" id="asyntai-accent" name="accent" value="{{accent}}" maxlength="7" style="max-width:160px;">
+        <small class="form-text text-muted">{{#str}} accentdesc, local_asyntaisearch {{/str}}</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{#str}} saveplacement, local_asyntaisearch {{/str}}</button>
+</form>
+
+<form method="post" action="{{formurl}}" class="asyntai-panel">
+    <input type="hidden" name="sesskey" value="{{sesskey}}">
+    <input type="hidden" name="savesync" value="1">
+
+    <h3>{{#str}} synctitle, local_asyntaisearch {{/str}}</h3>
+    <p class="asyntai-detail">{{#str}} syncdesc, local_asyntaisearch {{/str}}</p>
+
+    <div class="form-check" style="margin:14px 0;">
+        <input class="form-check-input" type="checkbox" id="asyntai-syncenabled" name="syncenabled" value="1" {{#syncenabled}}checked{{/syncenabled}}>
+        <label class="form-check-label" for="asyntai-syncenabled"><strong>{{#str}} syncenable, local_asyntaisearch {{/str}}</strong></label>
+    </div>
+
+    <div style="font-weight:600;margin:14px 0 8px;">{{#str}} synccourses, local_asyntaisearch {{/str}}</div>
+    {{^hascourses}}
+        <div class="asyntai-detail">{{#str}} nocourses, local_asyntaisearch {{/str}}</div>
+    {{/hascourses}}
+    {{#hascourses}}
+    <div class="asyntai-courses">
+        {{#courses}}
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="asyntai-course-{{id}}" name="courses[]" value="{{id}}" {{#checked}}checked{{/checked}}>
+            <label class="form-check-label" for="asyntai-course-{{id}}">
+                {{fullname}} <span style="color:#888;">({{shortname}}{{#categoryname}} &middot; {{.}}{{/categoryname}})</span>
+                {{#hidden}} <span style="color:#b32d2e;">{{#str}} coursehidden, local_asyntaisearch {{/str}}</span>{{/hidden}}
+            </label>
+        </div>
+        {{/courses}}
+    </div>
+    {{/hascourses}}
+
+    <div style="font-weight:600;margin:14px 0 8px;">{{#str}} synctypes, local_asyntaisearch {{/str}}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;">
+        {{#types}}
+        <div class="form-check" style="min-width:160px;">
+            <input class="form-check-input" type="checkbox" id="asyntai-type-{{type}}" name="types[]" value="{{type}}" {{#checked}}checked{{/checked}}>
+            <label class="form-check-label" for="asyntai-type-{{type}}">{{label}}</label>
+        </div>
+        {{/types}}
+    </div>
+
+    <p class="asyntai-fine" style="margin-top:14px;">{{#str}} syncnote, local_asyntaisearch {{/str}}</p>
+
+    <button type="submit" class="btn btn-primary" style="margin-top:8px;">{{#str}} syncsave, local_asyntaisearch {{/str}}</button>
+</form>
+{{/isconnected}}
+</div>
