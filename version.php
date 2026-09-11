@@ -29,6 +29,6 @@ $plugin->version = 2026090900;
 // Moodle 4.2: the first release with the core_external namespace this
 // plugin's web service functions are written against.
 $plugin->requires = 2023042400;
-$plugin->supported = [402, 501];
+$plugin->supported = [402, 502];
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '1.0.0';
